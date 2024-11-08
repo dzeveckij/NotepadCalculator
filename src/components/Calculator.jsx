@@ -19,6 +19,14 @@ const parseExpression = (input, variables) => {
         return { error: 'Invalid value for variable assignment' };
       }
     }
+    // Handle trigonometric functions
+    else if (tokens[0] === 'sin' || tokens[0] === 'cos' || tokens[0] === 'tan') {
+      return handleTrigonometric(tokens);
+    }
+    // Handle logarithmic and exponential functions
+    else if (tokens[0] === 'log' || tokens[0] === 'exp') {
+      return handleLogExp(tokens);
+    }
     // Handle currency conversions
     else if (input.includes('in') || input.includes('to')) {
       return handleConversion(tokens);
@@ -130,8 +138,51 @@ const handleCalculation = (tokens, variables) => {
     }
   }
 
-  return { value, unit, error: null };
+  return { value, unit: '', error: null };
 };
+
+
+const handleTrigonometric = (tokens) => {
+  const value = parseFloat(tokens[1]);
+  if (isNaN(value)) return { error: 'Invalid value for trigonometric function' };
+
+  let result;
+  switch (tokens[0]) {
+    case 'sin':
+      result = Math.sin(value);
+      break;
+    case 'cos':
+      result = Math.cos(value);
+      break;
+    case 'tan':
+      result = Math.tan(value);
+      break;
+    default:
+      return { error: 'Unknown trigonometric function' };
+  }
+
+  return { value: result, unit: '', error: null };
+};
+
+const handleLogExp = (tokens) => {
+  const value = parseFloat(tokens[1]);
+  if (isNaN(value)) return { error: 'Invalid value for logarithmic/exponential function' };
+
+  let result;
+  switch (tokens[0]) {
+    case 'log':
+      result = Math.log(value);
+      break;
+    case 'exp':
+      result = Math.exp(value);
+      break;
+    default:
+      return { error: 'Unknown logarithmic/exponential function' };
+  }
+
+  return { value: result, unit: '', error: null };
+};
+
 
 const handlePercentage = (tokens) => {
   const value = parseFloat(tokens[0]);

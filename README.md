@@ -41,3 +41,16 @@
 ### Simple Number or Currency
 - **Syntax:** `value`
 - **Example:** `100`
+
+### Trigonometric Functions
+- **Syntax:** `function value`
+- **Example:** `sin 30`
+- **Supported Functions:** sin, cos, tan
+
+### Logarithmic Functions
+- **Syntax:** `log value`
+- **Example:** `log 10`
+
+### Exponential Functions
+- **Syntax:** `exp value`
+- **Example:** `exp 2`
