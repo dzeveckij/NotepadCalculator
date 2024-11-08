@@ -17,6 +17,22 @@
 ### Currency Conversions
 - **Syntax:** `amount from_currency in to_currency`
 - **Example:** `10 USD in EUR`
+- **Supported Currencies:** USD, EUR, GBP
+
+### Length Conversions
+- **Syntax:** `amount from_unit in to_unit`
+- **Example:** `1 meter in inch`
+- **Supported Units:** meter, kilometer, centimeter, millimeter, inch, foot
+
+### Weight Conversions
+- **Syntax:** `amount from_unit in to_unit`
+- **Example:** `1 kilogram in pound`
+- **Supported Units:** kilogram, gram, milligram, pound, ounce
+
+### Volume Conversions
+- **Syntax:** `amount from_unit in to_unit`
+- **Example:** `1 liter in gallon`
+- **Supported Units:** liter, milliliter, cubic_meter, gallon, quart
 
 ### Percentage Calculations
 - **Syntax:** `percentage% of value`
