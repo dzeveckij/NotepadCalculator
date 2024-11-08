@@ -143,53 +143,6 @@ const handlePercentage = (tokens) => {
   return { value: value / 100, unit: '%', error: null };
 };
 
-const CalculatorLine = ({ onCalculate, focused, onFocus, variables }) => {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState(null);
-  const inputRef = useRef(null);
-
-  const handleChange = (e) => {
-    const text = e.target.value;
-    setInput(text);
-    const calculation = parseExpression(text, variables);
-    setResult(calculation);
-    if (calculation && !calculation.error) {
-      onCalculate(calculation.value);
-    } else {
-      onCalculate(0);
-    }
-  };
-
-  useEffect(() => {
-    if (focused && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [focused]);
-
-  return (
-    <div className="flex items-center space-x-4 py-2 px-4 hover:bg-gray-800/50 rounded">
-      <input
-        ref={inputRef}
-        className="flex-1 bg-transparent text-yellow-400 text-lg outline-none"
-        value={input}
-        onChange={handleChange}
-        onFocus={() => onFocus()}
-        placeholder="Enter calculation..."
-      />
-      {result && !result.error && (
-        <div className="text-green-400 text-lg">
-          {result.value.toFixed(2)} {result.unit}
-        </div>
-      )}
-      {result?.error && (
-        <div className="text-red-400 text-sm">
-          {result.error}
-        </div>
-      )}
-    </div>
-  );
-};
-
 const Calculator = () => {
   const [lines, setLines] = useState(['']);
   const [results, setResults] = useState([]);
@@ -226,8 +179,8 @@ const Calculator = () => {
           {/* Main Text Area */}
           <textarea
             ref={textareaRef}
-             className="w-full h-full min-h-[400px] p-4 font-mono text-md resize-none outline-none 
-             bg-gray-800 text-green-400"
+            className="w-full h-full min-h-[400px] p-4 font-mono text-md resize-none outline-none 
+            bg-gray-800 text-green-400"
             value={lines.join('\n')}
             onChange={handleInput}
             spellCheck={false}
