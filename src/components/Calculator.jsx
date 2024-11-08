@@ -172,23 +172,22 @@ const CalculatorLine = ({ onCalculate, focused, onFocus, variables }) => {
 };
 
 const Calculator = () => {
-  const [lines, setLines] = useState([{ id: 1, value: 0 }]);
-  const [total, setTotal] = useState(0);
-  const [focusedLine, setFocusedLine] = useState(0);
+  const [lines, setLines] = useState(['']);
+  const [results, setResults] = useState([]);
   const [variables, setVariables] = useState({});
+  const textareaRef = useRef(null);
 
-  const handleCalculate = useCallback((index, value) => {
-    const newLines = [...lines];
-    newLines[index].value = value;
+  const handleInput = (e) => {
+    const text = e.target.value;
+    const newLines = text.split('\n');
     setLines(newLines);
-    setTotal(newLines.reduce((sum, line) => sum + (line.value || 0), 0));
-  }, [lines]);
-
-  const addLine = useCallback(() => {
-    const newLines = [...lines, { id: lines.length + 1, value: 0 }];
-    setLines(newLines);
-    setFocusedLine(newLines.length - 1);
-  }, [lines]);
+    
+    // Calculate results for each line
+    const newResults = newLines.map(line => 
+      line.trim() ? parseExpression(line, variables) : null
+    );
+    setResults(newResults);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
@@ -203,32 +202,37 @@ const Calculator = () => {
           <ChevronDown className="text-gray-400" size={20} />
         </div>
         
-        <div className="max-h-[600px] overflow-y-auto">
-          {lines.map((line, index) => (
-            <CalculatorLine
-              key={line.id}
-              onCalculate={(value) => handleCalculate(index, value)}
-              focused={index === focusedLine}
-              onFocus={() => setFocusedLine(index)}
-              variables={variables}
-            />
-          ))}
-        </div>
-        
-        <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={addLine}
-              className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <Plus size={20} className="mr-1" />
-              Add Line
-            </button>
-            <div className="flex items-center text-white">
-              <span className="mr-2">Total</span>
-              <ArrowRight size={16} className="mr-2" />
-              <span className="text-lg font-semibold">${total.toFixed(2)}</span>
-            </div>
+        {/* Calculator Content */}
+        <div className="relative min-h-[400px] flex">
+          {/* Main Text Area */}
+          <textarea
+            ref={textareaRef}
+             className="w-full h-full min-h-[400px] p-4 font-mono text-md resize-none outline-none 
+             bg-gray-800 text-green-400"
+            value={lines.join('\n')}
+            onChange={handleInput}
+            spellCheck={false}
+          />
+          
+          {/* Results Overlay */}
+          <div className="absolute top-0 right-0 p-4 pointer-events-none">
+            {results.map((result, index) => (
+              <div 
+                key={index}
+                className="h-[24px] flex items-center justify-end"
+              >
+                {result && !result.error && (
+                  <span className="text-green-600 font-mono">
+                    = {result.value.toFixed(2)} {result.unit}
+                  </span>
+                )}
+                {result?.error && (
+                  <span className="text-red-500 text-sm">
+                    {result.error}
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
