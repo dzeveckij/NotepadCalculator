@@ -1,3 +1,20 @@
+const shorthandMultipliers = {
+  k: 1e3,
+  m: 1e6,
+  b: 1e9,
+  t: 1e12,
+};
+
+const parseNumberWithShorthand = (token) => {
+  const match = token.match(/^([\d.]+)([kmbt]?)$/i);
+  if (match) {
+    const value = parseFloat(match[1]);
+    const multiplier = shorthandMultipliers[match[2].toLowerCase()] || 1;
+    return value * multiplier;
+  }
+  return parseFloat(token);
+};
+
 export const parseExpression = (input, variables) => {
   if (!input.trim()) return null;
 
@@ -162,8 +179,7 @@ const handleConversion = (tokens) => {
 };
 
 const handleCalculation = (tokens, variables) => {
-  let value =
-    parseFloat(tokens[0].replace(/[$€£]/, "")) || variables[tokens[0]];
+  let value = parseNumberWithShorthand(tokens[0].replace(/[$€£]/, "")) || variables[tokens[0]];
   let currentOp = null;
   let unit = tokens[0].match(/[$€£]/)?.[0] || "";
 
@@ -173,7 +189,7 @@ const handleCalculation = (tokens, variables) => {
     if (["+", "-", "*", "/", "times", "plus", "minus"].includes(token)) {
       currentOp = token;
     } else {
-      const num = parseFloat(token.replace(/[$€£]/, "")) || variables[token];
+      const num = parseNumberWithShorthand(token.replace(/[$€£]/, "")) || variables[token];
       const tokenUnit = token.match(/[$€£]/)?.[0] || "";
       if (tokenUnit && tokenUnit !== unit) {
         throw new Error("Cannot mix different currencies in calculation");
@@ -263,7 +279,7 @@ const handleSimpleNumber = (token, variables) => {
   if (variables[token] !== undefined) {
     return { value: variables[token], unit: "", error: null };
   }
-  const value = parseFloat(token.replace(/[$€£]/, ""));
+  const value = parseNumberWithShorthand(token.replace(/[$€£]/, ""));
   const unit = token.match(/[$€£]/)?.[0] || "";
   if (!isNaN(value)) {
     return { value, unit, error: null };
